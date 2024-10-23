@@ -48,7 +48,7 @@ public class ImageService implements IImageService{
             try {
 
               Image image = new Image();
-              image.setFileName(file.getName());
+              image.setFileName(file.getOriginalFilename());
               image.setFileType(file.getContentType());
               image.setImage(new SerialBlob(file.getBytes()));
               image.setProduct(product);
