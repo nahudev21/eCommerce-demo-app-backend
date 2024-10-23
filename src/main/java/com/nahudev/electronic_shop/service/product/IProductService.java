@@ -18,13 +18,13 @@ public interface IProductService {
 
     public List<Product> getAllProducts();
 
-    public List<Product> getProductsByCategoryId(String category);
+    public List<Product> getProductsByCategory(String category);
 
     public List<Product> getProductsByBrand(String brand);
 
     public List<Product> getProductsByCategoryAndBrand(String category, String brand);
 
-    public Product getProductByName(String name);
+    public List<Product> getProductsByName(String name);
 
     public List<Product> getProductsByBrandAndName(String brand, String name);
 
