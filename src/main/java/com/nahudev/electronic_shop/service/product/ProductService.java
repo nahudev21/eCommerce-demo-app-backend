@@ -1,13 +1,18 @@
 package com.nahudev.electronic_shop.service.product;
 
+import com.nahudev.electronic_shop.dto.ImageDTO;
+import com.nahudev.electronic_shop.dto.ProductDTO;
 import com.nahudev.electronic_shop.exceptions.ProductNotFoundException;
 import com.nahudev.electronic_shop.model.Category;
+import com.nahudev.electronic_shop.model.Image;
 import com.nahudev.electronic_shop.model.Product;
 import com.nahudev.electronic_shop.repository.ICategoryRepository;
+import com.nahudev.electronic_shop.repository.IImageRepository;
 import com.nahudev.electronic_shop.repository.IProductRepository;
 import com.nahudev.electronic_shop.request.AddProductRequest;
 import com.nahudev.electronic_shop.request.ProductUpdateRequest;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +25,10 @@ public class ProductService implements IProductService{
     private final IProductRepository productRepository;
 
     private final ICategoryRepository categoryRepository;
+
+    private final IImageRepository imageRepository;
+
+    private final ModelMapper modelMapper;
 
     @Override
     public Product addProduct(AddProductRequest request) {
@@ -115,4 +124,19 @@ public class ProductService implements IProductService{
     public Long countProductsByBrandAndName(String brand, String name) {
         return productRepository.countByBrandAndName(brand, name);
     }
+
+    @Override
+    public List<ProductDTO> getConvertedProducts(List<Product> products) {
+        return products.stream().map(this::convertToDto).toList();
+    }
+
+    @Override
+    public ProductDTO convertToDto(Product product) {
+        ProductDTO productDTO = modelMapper.map(product, ProductDTO.class);
+        List<Image> images = imageRepository.findByProductId(product.getId());
+        List<ImageDTO> imageDTOS = images.stream().map(image -> modelMapper.map(image, ImageDTO.class)).toList();
+        productDTO.setImages(imageDTOS);
+        return productDTO;
+    }
+
 }
