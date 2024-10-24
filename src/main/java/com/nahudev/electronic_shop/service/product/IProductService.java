@@ -1,5 +1,6 @@
 package com.nahudev.electronic_shop.service.product;
 
+import com.nahudev.electronic_shop.dto.ProductDTO;
 import com.nahudev.electronic_shop.model.Product;
 import com.nahudev.electronic_shop.request.AddProductRequest;
 import com.nahudev.electronic_shop.request.ProductUpdateRequest;
@@ -30,4 +31,7 @@ public interface IProductService {
 
     public Long countProductsByBrandAndName(String brand, String name);
 
+    List<ProductDTO> getConvertedProducts(List<Product> products);
+
+    ProductDTO convertToDto(Product product);
 }
