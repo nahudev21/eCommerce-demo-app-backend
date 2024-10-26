@@ -1,5 +1,6 @@
 package com.nahudev.electronic_shop.service.order;
 
+import com.nahudev.electronic_shop.dto.OrderDTO;
 import com.nahudev.electronic_shop.enums.OrderStatus;
 import com.nahudev.electronic_shop.exceptions.ResourceNotFoundException;
 import com.nahudev.electronic_shop.model.Cart;
@@ -10,6 +11,7 @@ import com.nahudev.electronic_shop.repository.IOrderRepository;
 import com.nahudev.electronic_shop.repository.IProductRepository;
 import com.nahudev.electronic_shop.service.cart.CartService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -26,6 +28,8 @@ public class OrderService implements IOrderService{
     private final IProductRepository productRepository;
 
     private final CartService cartService;
+
+    private final ModelMapper modelMapper;
 
     @Override
     public Order placeOrder(Long userId) {
@@ -77,13 +81,21 @@ public class OrderService implements IOrderService{
     }
 
     @Override
-    public Order getOrder(Long orderId) {
-        return orderRepository.findById(orderId).orElseThrow(() ->
-                new ResourceNotFoundException("Order not found!"));
+    public OrderDTO getOrder(Long orderId) {
+        return orderRepository.findById(orderId).map(this::convertToDto)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found!"));
     }
 
     @Override
-    public List<Order> getUserOrders(Long userId) {
-        return orderRepository.findByUserId(userId);
+    public List<OrderDTO> getUserOrders(Long userId) {
+        return orderRepository.findByUserId(userId)
+                .stream()
+                .map(this::convertToDto)
+                .toList();
     }
+
+    public OrderDTO convertToDto(Order order) {
+        return modelMapper.map(order, OrderDTO.class);
+    }
+
 }
