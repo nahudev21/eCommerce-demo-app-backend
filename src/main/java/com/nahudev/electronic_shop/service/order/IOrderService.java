@@ -7,9 +7,11 @@ import java.util.List;
 
 public interface IOrderService {
 
-  public Order placeOrder(Long userId);
+    public Order placeOrder(Long userId);
 
-  public OrderDTO getOrder(Long orderId);
+    public OrderDTO getOrder(Long orderId);
 
-    List<OrderDTO> getUserOrders(Long userId);
+    public List<OrderDTO> getUserOrders(Long userId);
+
+    public OrderDTO convertToDto(Order order);
 }

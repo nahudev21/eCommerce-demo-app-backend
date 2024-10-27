@@ -1,9 +1,12 @@
 package com.nahudev.electronic_shop.controller;
 
 import com.nahudev.electronic_shop.exceptions.ResourceNotFoundException;
+import com.nahudev.electronic_shop.model.Cart;
+import com.nahudev.electronic_shop.model.User;
 import com.nahudev.electronic_shop.response.ApiResponse;
 import com.nahudev.electronic_shop.service.cart.ICartItemService;
 import com.nahudev.electronic_shop.service.cart.ICartService;
+import com.nahudev.electronic_shop.service.user.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,17 +21,19 @@ public class CartItemController {
 
     private final ICartService cartService;
 
+    private final IUserService userService;
+
     @PostMapping("/item/add")
-    public ResponseEntity<ApiResponse> addItemToCart(@RequestParam(required = false) Long cartId,
+    public ResponseEntity<ApiResponse> addItemToCart(
                                                      @RequestParam Long productId,
                                                      @RequestParam Integer quantity) {
 
-        if (cartId == null) {
-            cartId = cartService.initializeNewCart();
-        }
-
         try {
-            cartItemService.addItemToCart(cartId, productId, quantity);
+
+            User user = userService.getUserById(1L);
+            Cart cart = cartService.initializeNewCart(user);
+
+            cartItemService.addItemToCart(cart.getId(), productId, quantity);
             return ResponseEntity.ok(new ApiResponse("Add product to cart success!", null));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

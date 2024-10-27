@@ -1,5 +1,6 @@
 package com.nahudev.electronic_shop.service.user;
 
+import com.nahudev.electronic_shop.dto.UserDTO;
 import com.nahudev.electronic_shop.model.User;
 import com.nahudev.electronic_shop.request.CreateUserRequest;
 import com.nahudev.electronic_shop.request.UpdateUserRequest;
@@ -14,4 +15,5 @@ public interface IUserService {
 
     public void deleteUser(Long userId);
 
+    public UserDTO convertToDto(User user);
 }
