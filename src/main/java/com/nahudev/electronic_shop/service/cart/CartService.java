@@ -2,6 +2,7 @@ package com.nahudev.electronic_shop.service.cart;
 
 import com.nahudev.electronic_shop.exceptions.ResourceNotFoundException;
 import com.nahudev.electronic_shop.model.Cart;
+import com.nahudev.electronic_shop.model.User;
 import com.nahudev.electronic_shop.repository.ICartItemRepository;
 import com.nahudev.electronic_shop.repository.ICartRepository;
 import jakarta.transaction.Transactional;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
@@ -55,11 +57,13 @@ public class CartService implements ICartService{
     }
 
     @Override
-    public Long initializeNewCart() {
-        Cart newCart = new Cart();
-        Long newCartId = cartIdGenerator.incrementAndGet();
-        newCart.setId(newCartId);
-        return cartRepository.save(newCart).getId();
+    public Cart initializeNewCart(User user) {
+        return Optional.ofNullable(getCartByUserId(user.getId()))
+                .orElseGet(() -> {
+                    Cart newCart = new Cart();
+                    newCart.setUser(user);
+                    return cartRepository.save(newCart);
+                });
     }
 
     @Override

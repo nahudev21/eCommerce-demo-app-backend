@@ -1,5 +1,6 @@
 package com.nahudev.electronic_shop.service.user;
 
+import com.nahudev.electronic_shop.dto.UserDTO;
 import com.nahudev.electronic_shop.exceptions.AlreadyExistsException;
 import com.nahudev.electronic_shop.exceptions.ResourceNotFoundException;
 import com.nahudev.electronic_shop.model.User;
@@ -7,6 +8,7 @@ import com.nahudev.electronic_shop.repository.IUserRepository;
 import com.nahudev.electronic_shop.request.CreateUserRequest;
 import com.nahudev.electronic_shop.request.UpdateUserRequest;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -16,6 +18,8 @@ import java.util.Optional;
 public class UserService implements IUserService{
 
     private final IUserRepository userRepository;
+
+    private final ModelMapper modelMapper;
 
     @Override
     public User getUserById(Long userId) {
@@ -54,4 +58,10 @@ public class UserService implements IUserService{
           throw new ResourceNotFoundException("user not found!");
       });
     }
+
+    @Override
+    public UserDTO convertToDto(User user) {
+        return modelMapper.map(user, UserDTO.class);
+    }
+
 }

@@ -94,6 +94,7 @@ public class OrderService implements IOrderService{
                 .toList();
     }
 
+    @Override
     public OrderDTO convertToDto(Order order) {
         return modelMapper.map(order, OrderDTO.class);
     }

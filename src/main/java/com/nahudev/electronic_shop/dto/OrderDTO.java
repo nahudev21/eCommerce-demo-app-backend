@@ -12,6 +12,8 @@ public class OrderDTO {
 
     private Long id;
 
+    private Long userId;
+
     private LocalDate orderDate;
 
     private BigDecimal totalAmount;
