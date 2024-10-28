@@ -1,4 +1,4 @@
-package com.nahudev.electronic_shop.config;
+package com.nahudev.electronic_shop.security.config;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
