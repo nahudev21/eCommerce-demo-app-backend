@@ -42,7 +42,7 @@ public class Cart {
         updateTotalAmount();
     }
 
-    private void updateTotalAmount() {
+    public void updateTotalAmount() {
 
         this.totalAmount = items.stream().map(item -> {
             BigDecimal unitPrice = item.getUnitPrice();
@@ -54,4 +54,8 @@ public class Cart {
 
     }
 
+    public void clear() {
+        this.setTotalAmount(new BigDecimal(0));
+        this.items.clear();
+    }
 }

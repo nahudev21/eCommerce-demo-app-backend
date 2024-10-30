@@ -1,6 +1,7 @@
 package com.nahudev.electronic_shop.controller;
 
 import com.nahudev.electronic_shop.dto.ProductDTO;
+import com.nahudev.electronic_shop.exceptions.AlreadyExistsException;
 import com.nahudev.electronic_shop.exceptions.ResourceNotFoundException;
 import com.nahudev.electronic_shop.model.Product;
 import com.nahudev.electronic_shop.request.AddProductRequest;
@@ -41,15 +42,15 @@ public class ProductController {
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+
     @PostMapping("/add")
     public ResponseEntity<ApiResponse> addProduct(@RequestBody AddProductRequest product) {
        try {
            Product addedProduct = productService.addProduct(product);
            ProductDTO productDTO = productService.convertToDto(addedProduct);
            return ResponseEntity.ok(new ApiResponse("Add product success!", productDTO));
-       } catch (Exception e) {
-           return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+       } catch (AlreadyExistsException e) {
+           return ResponseEntity.status(HttpStatus.CONFLICT)
                    .body(new ApiResponse(e.getMessage(), null));
        }
     }

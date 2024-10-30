@@ -32,7 +32,8 @@ public class ShopConfig {
 
     private final ShopUserDetailsService userDetailsService;
 
-    private static final List<String> SECURED_URLS = List.of("/api/v1/carts/**" , "/api/v1/cartItems/**");
+    private static final List<String> SECURED_URLS = List.of("/api/v1/carts/**" ,
+            "/api/v1/cartItems/**", "/api/v1/orders/**");
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
