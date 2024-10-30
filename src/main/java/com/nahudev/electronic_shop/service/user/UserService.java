@@ -3,14 +3,19 @@ package com.nahudev.electronic_shop.service.user;
 import com.nahudev.electronic_shop.dto.UserDTO;
 import com.nahudev.electronic_shop.exceptions.AlreadyExistsException;
 import com.nahudev.electronic_shop.exceptions.ResourceNotFoundException;
+import com.nahudev.electronic_shop.model.Role;
 import com.nahudev.electronic_shop.model.User;
 import com.nahudev.electronic_shop.repository.IUserRepository;
 import com.nahudev.electronic_shop.request.CreateUserRequest;
 import com.nahudev.electronic_shop.request.UpdateUserRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -20,6 +25,8 @@ public class UserService implements IUserService{
     private final IUserRepository userRepository;
 
     private final ModelMapper modelMapper;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public User getUserById(Long userId) {
@@ -36,7 +43,8 @@ public class UserService implements IUserService{
                     user.setFirstName(req.getFirstName());
                     user.setLastName(req.getLastName());
                     user.setEmail(req.getEmail());
-                    user.setPassword(req.getPassword());
+                    user.setPassword(passwordEncoder.encode(req.getPassword()));
+                    user.setRoles(List.of(new Role("ADMIN")));
                     return userRepository.save(user);
                 }).orElseThrow(() -> new AlreadyExistsException("The user already exists with email! " + request.getEmail()));
     }
@@ -62,6 +70,13 @@ public class UserService implements IUserService{
     @Override
     public UserDTO convertToDto(User user) {
         return modelMapper.map(user, UserDTO.class);
+    }
+
+    @Override
+    public User getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        return userRepository.findByEmail(email);
     }
 
 }
