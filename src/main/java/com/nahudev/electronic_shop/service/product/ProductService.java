@@ -2,6 +2,7 @@ package com.nahudev.electronic_shop.service.product;
 
 import com.nahudev.electronic_shop.dto.ImageDTO;
 import com.nahudev.electronic_shop.dto.ProductDTO;
+import com.nahudev.electronic_shop.exceptions.AlreadyExistsException;
 import com.nahudev.electronic_shop.exceptions.ProductNotFoundException;
 import com.nahudev.electronic_shop.model.Category;
 import com.nahudev.electronic_shop.model.Image;
@@ -33,6 +34,10 @@ public class ProductService implements IProductService{
     @Override
     public Product addProduct(AddProductRequest request) {
 
+        if (productExists(request.getName(), request.getBrand())) {
+            throw new AlreadyExistsException(request.getBrand()+ " " + request.getName()+ " already exists!");
+        }
+
         Category category = Optional.ofNullable(categoryRepository.findByName(request.getCategory().getName()))
                 .orElseGet(() -> {
                     Category newCategory = new Category(request.getCategory().getName());
@@ -44,7 +49,11 @@ public class ProductService implements IProductService{
         return productRepository.save(createProduct(request, category));
     }
 
-    private Product createProduct(AddProductRequest request, Category category) {
+    public boolean productExists(String name, String brand) {
+        return productRepository.existsByNameAndBrand(name, brand);
+    }
+
+    public Product createProduct(AddProductRequest request, Category category) {
         return new Product(
                 request.getName(),
                 request.getBrand(),

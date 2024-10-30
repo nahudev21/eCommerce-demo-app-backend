@@ -11,7 +11,7 @@ public class OrderItemDTO {
 
     private String productName;
 
-    private String productBand;
+    private String productBrand;
 
     private int quantity;
 

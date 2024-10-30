@@ -44,7 +44,7 @@ public class UserService implements IUserService{
                     user.setLastName(req.getLastName());
                     user.setEmail(req.getEmail());
                     user.setPassword(passwordEncoder.encode(req.getPassword()));
-                    user.setRoles(List.of(new Role("ADMIN")));
+                    user.setRoles(List.of(new Role("USER")));
                     return userRepository.save(user);
                 }).orElseThrow(() -> new AlreadyExistsException("The user already exists with email! " + request.getEmail()));
     }

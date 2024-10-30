@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import java.security.Key;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Function;
 
 @Component
 public class JwtUtils {
@@ -43,23 +44,34 @@ public class JwtUtils {
     }
 
     private Key key() {
-        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
+        byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 
     public String getUsernameFromToken(String token) {
+        return getClaim(token, Claims::getSubject);
+    }
+
+    public <T> T getClaim(String token, Function<Claims, T> claimsTFunction) {
+        Claims claims = getAllClaims(token);
+        return claimsTFunction.apply(claims);
+    }
+
+    public Claims getAllClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key())
                 .build()
                 .parseClaimsJws(token)
-                .getBody().getSubject();
+                .getBody();
     }
 
-    public Boolean validateToken(String token) {
+    public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()
                     .setSigningKey(key())
                     .build()
-                    .parseClaimsJws(token);
+                    .parseClaimsJws(token)
+                    .getBody();
             return true;
         } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException
                 | SignatureException | IllegalArgumentException e) {
