@@ -10,6 +10,7 @@ import com.nahudev.electronic_shop.service.product.IProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,6 +41,7 @@ public class ProductController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/add")
     public ResponseEntity<ApiResponse> addProduct(@RequestBody AddProductRequest product) {
        try {
@@ -52,6 +54,7 @@ public class ProductController {
        }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/product/{productId}/product")
     public ResponseEntity<ApiResponse> updateProduct(@RequestBody ProductUpdateRequest product,
                                                      @PathVariable Long productId) {
@@ -65,6 +68,7 @@ public class ProductController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/product/{productId}/product")
     public ResponseEntity<ApiResponse> deleteProduct(@PathVariable Long productId) {
         try {

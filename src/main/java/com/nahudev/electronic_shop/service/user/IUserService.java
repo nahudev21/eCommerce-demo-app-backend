@@ -16,4 +16,6 @@ public interface IUserService {
     public void deleteUser(Long userId);
 
     public UserDTO convertToDto(User user);
+
+    public User getAuthenticatedUser();
 }
