@@ -2,6 +2,7 @@ package com.nahudev.electronic_shop.security.config;
 
 import com.nahudev.electronic_shop.security.jwt.AuthTokenFilter;
 import com.nahudev.electronic_shop.security.jwt.JwtAuthEntryPoint;
+import com.nahudev.electronic_shop.security.jwt.LogoutService;
 import com.nahudev.electronic_shop.security.user.ShopUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -15,6 +16,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -44,6 +46,13 @@ public class ShopConfig {
                         .anyRequest().permitAll());
          http.authenticationProvider(daoAuthenticationProvider());
          http.addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+         http.logout(logout -> {
+             logout.logoutUrl("/api/v1/auth/logout");
+             logout.addLogoutHandler(logoutHandler());
+             logout.logoutSuccessHandler((request, response, authentication) ->
+                     SecurityContextHolder.clearContext()
+             );
+         });
 
          return http.build();
     }
@@ -61,6 +70,11 @@ public class ShopConfig {
     @Bean
     public AuthTokenFilter authTokenFilter() {
         return new AuthTokenFilter();
+    }
+
+    @Bean
+    public LogoutService logoutHandler() {
+        return new LogoutService();
     }
 
     @Bean

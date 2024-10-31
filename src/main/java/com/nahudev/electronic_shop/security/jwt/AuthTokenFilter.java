@@ -1,6 +1,7 @@
 package com.nahudev.electronic_shop.security.jwt;
 
 
+import com.nahudev.electronic_shop.repository.ITokenRepository;
 import com.nahudev.electronic_shop.security.user.ShopUserDetailsService;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -25,6 +26,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     @Autowired
     private ShopUserDetailsService userDetailsService;
 
+    @Autowired
+    private ITokenRepository tokenRepository;
+
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
@@ -33,10 +37,13 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
         String jwt = parseJwt(request);
         System.out.println(jwt);
+        var isTokenValid = tokenRepository.findByAccessToken(jwt)
+                .map(t -> !t.isExpired() && !t.isRevoked())
+                .orElse(false);
 
         try {
 
-            if (StringUtils.hasText(jwt) && jwtUtils.validateToken(jwt)) {
+            if (StringUtils.hasText(jwt) && jwtUtils.validateToken(jwt) && isTokenValid) {
                 String username = jwtUtils.getUsernameFromToken(jwt);
                 System.out.println(username);
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);

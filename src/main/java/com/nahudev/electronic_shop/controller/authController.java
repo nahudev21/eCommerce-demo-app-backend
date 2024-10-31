@@ -1,5 +1,10 @@
 package com.nahudev.electronic_shop.controller;
 
+import com.nahudev.electronic_shop.model.Token;
+import com.nahudev.electronic_shop.model.TokenType;
+import com.nahudev.electronic_shop.model.User;
+import com.nahudev.electronic_shop.repository.ITokenRepository;
+import com.nahudev.electronic_shop.repository.IUserRepository;
 import com.nahudev.electronic_shop.request.LoginRequest;
 import com.nahudev.electronic_shop.response.ApiResponse;
 import com.nahudev.electronic_shop.response.JwtResponse;
@@ -28,6 +33,10 @@ public class authController {
 
     private final JwtUtils jwtUtils;
 
+    private final IUserRepository userRepository;
+
+    private final ITokenRepository tokenRepository;
+
     @PostMapping("/login")
     public ResponseEntity<ApiResponse> login(@Valid @RequestBody LoginRequest request) {
 
@@ -38,6 +47,18 @@ public class authController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtUtils.generateTokenFromUser(authentication);
             ShopUserDetails userDetails = (ShopUserDetails) authentication.getPrincipal();
+            User user = userRepository.findByEmail(request.getEmail());
+
+            Token tokenUser = new Token();
+            tokenUser.setAccessToken(jwt);
+            tokenUser.setTokenType(TokenType.BEARER);
+            tokenUser.setExpired(false);
+            tokenUser.setRevoked(false);
+            tokenUser.setUser(user);
+
+            revokeAllUserTokens(user);
+            tokenRepository.save(tokenUser);
+
             JwtResponse jwtResponse = new JwtResponse(userDetails.getId(), jwt);
             return ResponseEntity.ok(new ApiResponse("Login successfully!", jwtResponse));
         } catch (AuthenticationException e) {
@@ -45,6 +66,19 @@ public class authController {
                     .body(new ApiResponse(e.getMessage(), "Email or password invalid!"));
         }
 
+    }
+
+    public void revokeAllUserTokens(User user) {
+        var validUserTokens = tokenRepository.findAllValidTokensByUser(user.getId());
+
+        if (validUserTokens.isEmpty())
+            return;
+
+        validUserTokens.forEach(t -> {
+            t.setExpired(true);
+            t.setRevoked(true);
+        });
+        tokenRepository.saveAll(validUserTokens);
     }
 
 }
