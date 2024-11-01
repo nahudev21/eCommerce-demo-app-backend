@@ -4,6 +4,7 @@ import com.nahudev.electronic_shop.security.jwt.AuthTokenFilter;
 import com.nahudev.electronic_shop.security.jwt.JwtAuthEntryPoint;
 import com.nahudev.electronic_shop.security.jwt.LogoutService;
 import com.nahudev.electronic_shop.security.user.ShopUserDetailsService;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
@@ -21,7 +22,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -88,6 +96,17 @@ public class ShopConfig {
         authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(@NonNull CorsRegistry registry) {
+                registry.addMapping("/**").allowedOrigins("http://localhost:5173/").
+                        allowedMethods("*").allowedHeaders("*");
+            }
+        };
     }
 
 }
