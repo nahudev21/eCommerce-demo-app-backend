@@ -30,11 +30,11 @@ Implementación de JWT para la autenticación segura.
 Control de acceso basado en roles para administradores y usuarios.
 Tecnologías Utilizadas:
 
-- Lenguaje: Java
-Framework: Spring Boot
-Base de Datos: MySQL
-Herramientas de Construcción: Maven
-Seguridad: Spring Security, JWT
+- Lenguaje: Java,
+Framework: Spring Boot,
+Base de Datos: MySQL,
+Herramientas de Construcción: Maven,
+Seguridad: Spring Security, JWT.
 
 - Objetivos:
 Crear una solución de eCommerce escalable que pueda crecer con las necesidades del negocio.
