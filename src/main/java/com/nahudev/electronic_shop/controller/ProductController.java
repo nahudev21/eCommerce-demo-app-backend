@@ -55,22 +55,22 @@ public class ProductController {
        }
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/product/{productId}/product")
+    //@PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/product/{productId}/update")
     public ResponseEntity<ApiResponse> updateProduct(@RequestBody ProductUpdateRequest product,
                                                      @PathVariable Long productId) {
         try {
             Product updatedProduct = productService.updateProduct(product, productId);
             ProductDTO productDTO = productService.convertToDto(updatedProduct);
-            return ResponseEntity.ok(new ApiResponse("Add product success!", productDTO));
+            return ResponseEntity.ok(new ApiResponse("Update product success!", productDTO));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiResponse(e.getMessage(), null));
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/product/{productId}/product")
+    //@PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/product/{productId}/delete")
     public ResponseEntity<ApiResponse> deleteProduct(@PathVariable Long productId) {
         try {
             productService.deleteProduct(productId);
@@ -82,10 +82,10 @@ public class ProductController {
     }
 
     @GetMapping("/by/brand-and-name")
-    public ResponseEntity<ApiResponse> getProductsByBrandAndName(@RequestParam String brandName,
-                                                                @RequestParam String productName) {
+    public ResponseEntity<ApiResponse> getProductsByBrandAndName(@RequestParam String brand,
+                                                                @RequestParam String name) {
         try {
-            List<Product> products = productService.getProductsByBrandAndName(brandName, productName);
+            List<Product> products = productService.getProductsByBrandAndName(brand, name);
             List<ProductDTO> convertedProducts = productService.getConvertedProducts(products);
             if (products.isEmpty()) {
                 ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse("No Products found!", null));
