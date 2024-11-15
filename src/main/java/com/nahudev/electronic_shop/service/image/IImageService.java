@@ -10,6 +10,10 @@ public interface IImageService {
 
     public Image getImageById(Long imageId);
 
+    public List<Image> getImageByProductId(Long productId);
+
+    public List<Image> getImages();
+
     public void deleteImageById(Long imageId);
 
     public List<ImageDTO> savedImages(List<MultipartFile> files, Long productId);
