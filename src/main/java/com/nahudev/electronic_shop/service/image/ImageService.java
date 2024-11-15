@@ -31,6 +31,16 @@ public class ImageService implements IImageService{
     }
 
     @Override
+    public List<Image> getImageByProductId(Long productId) {
+        return imageRepository.findByProductId(productId);
+    }
+
+    @Override
+    public List<Image> getImages() {
+        return imageRepository.findAll();
+    }
+
+    @Override
     public void deleteImageById(Long imageId) {
       imageRepository.findById(imageId).ifPresentOrElse(imageRepository::delete, () -> {
           throw new ResourceNotFoundException("No image found with id: " + imageId);

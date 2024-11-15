@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @RestController
@@ -55,7 +56,7 @@ public class ImageController {
 
     }
 
-    @PutMapping("image/{imageId}/update")
+    @PutMapping("/image/{imageId}/update")
     public ResponseEntity<ApiResponse> updateImage(@PathVariable Long imageId,
                                                    @RequestBody MultipartFile file) {
 
@@ -76,7 +77,7 @@ public class ImageController {
 
     }
 
-    @DeleteMapping("image/{imageId}/delete")
+    @DeleteMapping("/image/{imageId}/delete")
     public ResponseEntity<ApiResponse> deleteImage(@PathVariable Long imageId) {
 
         try {
@@ -96,4 +97,25 @@ public class ImageController {
 
     }
 
+    @GetMapping("/image/download-all")
+    public ResponseEntity<List<ByteArrayResource>> downloadImages() throws SQLException {
+        List<Image> images = imageService.getImages();
+        List<ByteArrayResource> resources = images.stream()
+                .map(image -> {
+                    try {
+                        return new ByteArrayResource(image.getImage().getBytes(1, (int) image.getImage().length()));
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .toList();
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(resources);
+    }
 }
+
+
