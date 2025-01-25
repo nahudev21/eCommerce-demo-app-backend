@@ -29,6 +29,8 @@ public class Product {
 
     private int inventory;
 
+    private String status;
+
     private String description;
 
     @ManyToOne
@@ -38,12 +40,14 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images;
 
-    public Product(String name, String brand, BigDecimal price, int inventory,
+    public Product(Long id, String name, String brand, BigDecimal price, int inventory, String status,
                    String description, Category category) {
+        this.id = id;
         this.name = name;
         this.brand = brand;
         this.price = price;
         this.inventory = inventory;
+        this.status = status;
         this.description = description;
         this.category = category;
     }

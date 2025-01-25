@@ -55,10 +55,12 @@ public class ProductService implements IProductService{
 
     public Product createProduct(AddProductRequest request, Category category) {
         return new Product(
+                request.getId(),
                 request.getName(),
                 request.getBrand(),
                 request.getPrice(),
                 request.getInventory(),
+                request.getStatus(),
                 request.getDescription(),
                 category
         );
@@ -80,6 +82,7 @@ public class ProductService implements IProductService{
         existingProduct.setBrand(request.getBrand());
         existingProduct.setPrice(request.getPrice());
         existingProduct.setInventory(request.getInventory());
+        existingProduct.setStatus(request.getStatus());
         existingProduct.setDescription(request.getDescription());
 
         Category category = categoryRepository.findByName(request.getCategory().getName());
