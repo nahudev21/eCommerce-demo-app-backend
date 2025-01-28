@@ -1,5 +1,6 @@
 package com.nahudev.electronic_shop;
 
+import com.nahudev.electronic_shop.controller.MercadoPagoController;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
