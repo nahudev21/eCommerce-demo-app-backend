@@ -4,13 +4,13 @@ import com.nahudev.electronic_shop.security.jwt.AuthTokenFilter;
 import com.nahudev.electronic_shop.security.jwt.JwtAuthEntryPoint;
 import com.nahudev.electronic_shop.security.jwt.LogoutService;
 import com.nahudev.electronic_shop.security.user.ShopUserDetailsService;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -25,10 +25,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 
@@ -61,6 +57,7 @@ public class ShopConfig {
                      SecurityContextHolder.clearContext()
              );
          });
+        http.cors(Customizer.withDefaults());
 
          return http.build();
     }
@@ -99,14 +96,15 @@ public class ShopConfig {
     }
 
     @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(@NonNull CorsRegistry registry) {
-                registry.addMapping("/**").allowedOrigins("http://localhost:5173/").
-                        allowedMethods("*").allowedHeaders("*");
-            }
-        };
+    CorsConfigurationSource corsConfigurationSource () {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173/"));
+        configuration.setAllowedMethods(Arrays.asList("*"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        configuration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
 }
