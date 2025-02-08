@@ -35,6 +35,11 @@ public class UserService implements IUserService{
     }
 
     @Override
+    public List<User> getListUsers() {
+        return userRepository.findAll();
+    }
+
+    @Override
     public User createUser(CreateUserRequest request) {
         return Optional.of(request)
                 .filter(user -> !userRepository.existsByEmail(request.getEmail()))
@@ -70,6 +75,11 @@ public class UserService implements IUserService{
     @Override
     public UserDTO convertToDto(User user) {
         return modelMapper.map(user, UserDTO.class);
+    }
+
+    @Override
+    public List<UserDTO> convertListToDto(List<User> users) {
+        return users.stream().map(this::convertToDto).toList();
     }
 
     @Override

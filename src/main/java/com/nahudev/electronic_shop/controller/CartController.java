@@ -1,5 +1,6 @@
 package com.nahudev.electronic_shop.controller;
 
+import com.nahudev.electronic_shop.dto.CartDTO;
 import com.nahudev.electronic_shop.exceptions.ResourceNotFoundException;
 import com.nahudev.electronic_shop.model.Cart;
 import com.nahudev.electronic_shop.response.ApiResponse;
@@ -18,11 +19,12 @@ public class CartController {
 
     private final ICartService cartService;
 
-    @GetMapping("/{cartId}/my-cart")
-    public ResponseEntity<ApiResponse> getCart(@PathVariable Long cartId) {
+    @GetMapping("/{userId}/my-cart")
+    public ResponseEntity<ApiResponse> getCart(@PathVariable Long userId) {
         try {
-            Cart cart = cartService.getCart(cartId);
-            return ResponseEntity.ok(new ApiResponse("Success!", cart));
+            Cart cart = cartService.getCartByUserId(userId);
+            CartDTO cartDTO = cartService.convertToDto(cart);
+            return ResponseEntity.ok(new ApiResponse("Success!", cartDTO));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiResponse(e.getMessage(), null));

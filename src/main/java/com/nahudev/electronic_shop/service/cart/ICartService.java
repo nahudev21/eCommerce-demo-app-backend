@@ -1,5 +1,6 @@
 package com.nahudev.electronic_shop.service.cart;
 
+import com.nahudev.electronic_shop.dto.CartDTO;
 import com.nahudev.electronic_shop.model.Cart;
 import com.nahudev.electronic_shop.model.User;
 
@@ -16,4 +17,6 @@ public interface ICartService {
     public Cart initializeNewCart(User user);
 
     public Cart getCartByUserId(Long userId);
+
+    CartDTO convertToDto(Cart cart);
 }

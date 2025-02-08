@@ -1,5 +1,6 @@
 package com.nahudev.electronic_shop.service.cart;
 
+import com.nahudev.electronic_shop.dto.CartDTO;
 import com.nahudev.electronic_shop.exceptions.ResourceNotFoundException;
 import com.nahudev.electronic_shop.model.Cart;
 import com.nahudev.electronic_shop.model.User;
@@ -7,6 +8,7 @@ import com.nahudev.electronic_shop.repository.ICartItemRepository;
 import com.nahudev.electronic_shop.repository.ICartRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -20,6 +22,8 @@ public class CartService implements ICartService{
     private final ICartRepository cartRepository;
 
     private final ICartItemRepository cartItemRepository;
+
+    private final ModelMapper modelMapper;
 
     private final AtomicLong cartIdGenerator = new AtomicLong(0);
 
@@ -69,6 +73,11 @@ public class CartService implements ICartService{
     @Override
     public Cart getCartByUserId(Long userId) {
         return cartRepository.findByUserId(userId);
+    }
+
+    @Override
+    public CartDTO convertToDto (Cart cart) {
+        return modelMapper.map(cart, CartDTO.class);
     }
 
 }

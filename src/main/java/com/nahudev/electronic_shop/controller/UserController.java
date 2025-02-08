@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("${api.prefix}/users")
@@ -27,6 +29,18 @@ public class UserController {
             UserDTO userDTO = userService.convertToDto(user);
             return ResponseEntity.ok(new ApiResponse("Success!", userDTO));
         } catch ( ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse(e.getMessage(), null));
+        }
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<ApiResponse> getListUsers() {
+        try {
+            List<User> users = userService.getListUsers();
+            List<UserDTO> usersDto = userService.convertListToDto(users);
+            return ResponseEntity.ok(new ApiResponse("Success!", usersDto));
+        } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiResponse(e.getMessage(), null));
         }

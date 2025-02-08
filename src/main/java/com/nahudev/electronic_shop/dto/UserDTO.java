@@ -24,6 +24,6 @@ public class UserDTO {
 
     private CartDTO cart;
 
-    private Collection<Role> roles = new HashSet<>();
+    private Collection<RoleDTO> roles = new HashSet<>();
 
 }
