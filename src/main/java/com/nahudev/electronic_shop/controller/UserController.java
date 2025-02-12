@@ -1,11 +1,14 @@
 package com.nahudev.electronic_shop.controller;
 
+import com.nahudev.electronic_shop.dto.RoleDTO;
 import com.nahudev.electronic_shop.dto.UserDTO;
 import com.nahudev.electronic_shop.exceptions.AlreadyExistsException;
 import com.nahudev.electronic_shop.exceptions.ResourceNotFoundException;
+import com.nahudev.electronic_shop.model.Role;
 import com.nahudev.electronic_shop.model.User;
 import com.nahudev.electronic_shop.request.CreateUserRequest;
 import com.nahudev.electronic_shop.request.UpdateUserRequest;
+import com.nahudev.electronic_shop.request.UpdateUserRoleRequest;
 import com.nahudev.electronic_shop.response.ApiResponse;
 import com.nahudev.electronic_shop.service.user.IUserService;
 import lombok.RequiredArgsConstructor;
@@ -65,6 +68,19 @@ public class UserController {
             User user = userService.updateUser(request, userId);
             UserDTO userDTO = userService.convertToDto(user);
             return ResponseEntity.ok(new ApiResponse("Update user success!", userDTO));
+        } catch ( ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse(e.getMessage(), null));
+        }
+    }
+
+    @PutMapping("/{roleId}/update-role")
+    public ResponseEntity<ApiResponse> updateUserRole(@RequestBody UpdateUserRoleRequest request,
+                                                  @PathVariable Long roleId) {
+        try {
+            Role role = userService.updateUserRole(request, roleId);
+            RoleDTO roleDTO = userService.convertRoleToDto(role);
+            return ResponseEntity.ok(new ApiResponse("Update role success!", roleDTO));
         } catch ( ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiResponse(e.getMessage(), null));

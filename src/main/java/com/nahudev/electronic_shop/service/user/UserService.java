@@ -1,13 +1,16 @@
 package com.nahudev.electronic_shop.service.user;
 
+import com.nahudev.electronic_shop.dto.RoleDTO;
 import com.nahudev.electronic_shop.dto.UserDTO;
 import com.nahudev.electronic_shop.exceptions.AlreadyExistsException;
 import com.nahudev.electronic_shop.exceptions.ResourceNotFoundException;
 import com.nahudev.electronic_shop.model.Role;
 import com.nahudev.electronic_shop.model.User;
+import com.nahudev.electronic_shop.repository.IRoleRepository;
 import com.nahudev.electronic_shop.repository.IUserRepository;
 import com.nahudev.electronic_shop.request.CreateUserRequest;
 import com.nahudev.electronic_shop.request.UpdateUserRequest;
+import com.nahudev.electronic_shop.request.UpdateUserRoleRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.Authentication;
@@ -23,6 +26,8 @@ import java.util.Optional;
 public class UserService implements IUserService{
 
     private final IUserRepository userRepository;
+
+    private final IRoleRepository roleRepository;
 
     private final ModelMapper modelMapper;
 
@@ -66,6 +71,19 @@ public class UserService implements IUserService{
     }
 
     @Override
+    public Role updateUserRole(UpdateUserRoleRequest request, Long id) {
+
+        Role role = roleRepository.findById(id).orElse(null);
+        Role newRole = new Role();
+        newRole.setId(role.getId());
+        newRole.setName(request.getRole().getName());
+        newRole.setUsers(role.getUsers());
+
+        return roleRepository.save(newRole);
+
+    }
+
+    @Override
     public void deleteUser(Long userId) {
       userRepository.findById(userId).ifPresentOrElse(userRepository::delete, () -> {
           throw new ResourceNotFoundException("user not found!");
@@ -80,6 +98,11 @@ public class UserService implements IUserService{
     @Override
     public List<UserDTO> convertListToDto(List<User> users) {
         return users.stream().map(this::convertToDto).toList();
+    }
+
+    @Override
+    public RoleDTO convertRoleToDto(Role role) {
+        return modelMapper.map(role, RoleDTO.class);
     }
 
     @Override
