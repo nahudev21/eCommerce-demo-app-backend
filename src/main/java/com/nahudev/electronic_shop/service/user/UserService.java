@@ -18,8 +18,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.management.relation.RoleNotFoundException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @Service
@@ -54,8 +57,24 @@ public class UserService implements IUserService{
                     user.setLastName(req.getLastName());
                     user.setEmail(req.getEmail());
                     user.setPassword(passwordEncoder.encode(req.getPassword()));
-                    user.setRoles(List.of(new Role("USER")));
+
+
+                    // Aquí creamos una colección de roles desde la base de datos para evitar crear nuevos roles
+                    Set<Role> roles = new HashSet<>();
+                    for (Role role : req.getRoles()) {
+                        // Verificamos si el rol ya existe en la base de datos
+                        Role existingRole = roleRepository.findByName(role.getName());
+
+                        roles.add(existingRole);
+                    }
+
+
+                    // Asignar los roles al usuario
+                    user.setRoles(roles);
+
+                    // Guardar el usuario en la base de datos
                     return userRepository.save(user);
+
                 }).orElseThrow(() -> new AlreadyExistsException("The user already exists with email! " + request.getEmail()));
     }
 
@@ -71,6 +90,24 @@ public class UserService implements IUserService{
     }
 
     @Override
+    public void deleteUser(Long userId) {
+        userRepository.findById(userId).ifPresentOrElse(userRepository::delete, () -> {
+            throw new ResourceNotFoundException("user not found!");
+        });
+    }
+
+    @Override
+    public Role createRole(Role request) {
+        return Optional.of(request)
+                .filter(role -> !roleRepository.existsByName(role.getName()))
+                .map(req -> {
+                    Role role = new Role();
+                    role.setName(req.getName());
+                    return roleRepository.save(role);
+                }).orElseThrow(() -> new AlreadyExistsException("The role already exists with name! " + request.getName()));
+    }
+
+    @Override
     public Role updateUserRole(UpdateUserRoleRequest request, Long id) {
 
         Role role = roleRepository.findById(id).orElse(null);
@@ -81,13 +118,6 @@ public class UserService implements IUserService{
 
         return roleRepository.save(newRole);
 
-    }
-
-    @Override
-    public void deleteUser(Long userId) {
-      userRepository.findById(userId).ifPresentOrElse(userRepository::delete, () -> {
-          throw new ResourceNotFoundException("user not found!");
-      });
     }
 
     @Override

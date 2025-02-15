@@ -74,6 +74,29 @@ public class UserController {
         }
     }
 
+    @DeleteMapping("/{userId}/delete")
+    public ResponseEntity<ApiResponse> deleteUser(@PathVariable Long userId) {
+        try {
+            userService.deleteUser(userId);
+            return ResponseEntity.ok(new ApiResponse("Deleted user success!", null));
+        } catch ( ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse(e.getMessage(), null));
+        }
+    }
+
+    @PostMapping("/role/add")
+    public ResponseEntity<ApiResponse> createRole(@RequestBody Role request) {
+        try {
+            Role role = userService.createRole(request);
+            RoleDTO roleDTO = userService.convertRoleToDto(role);
+            return ResponseEntity.ok(new ApiResponse("Create role success!", roleDTO));
+        } catch ( AlreadyExistsException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new ApiResponse(e.getMessage(), null));
+        }
+    }
+
     @PutMapping("/{roleId}/update-role")
     public ResponseEntity<ApiResponse> updateUserRole(@RequestBody UpdateUserRoleRequest request,
                                                   @PathVariable Long roleId) {
@@ -81,17 +104,6 @@ public class UserController {
             Role role = userService.updateUserRole(request, roleId);
             RoleDTO roleDTO = userService.convertRoleToDto(role);
             return ResponseEntity.ok(new ApiResponse("Update role success!", roleDTO));
-        } catch ( ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponse(e.getMessage(), null));
-        }
-    }
-
-    @DeleteMapping("/{userId}/delete")
-    public ResponseEntity<ApiResponse> deleteUser(@PathVariable Long userId) {
-        try {
-            userService.deleteUser(userId);
-            return ResponseEntity.ok(new ApiResponse("Deleted user success!", null));
         } catch ( ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiResponse(e.getMessage(), null));

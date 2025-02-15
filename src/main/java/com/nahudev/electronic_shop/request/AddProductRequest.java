@@ -16,6 +16,8 @@ public class AddProductRequest {
 
     private BigDecimal price;
 
+    private BigDecimal sellingPrice;
+
     private int inventory;
 
     private String status;

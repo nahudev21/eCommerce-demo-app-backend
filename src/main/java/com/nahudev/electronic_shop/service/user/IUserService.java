@@ -20,6 +20,8 @@ public interface IUserService {
 
     public User updateUser(UpdateUserRequest request, Long userId);
 
+    public Role createRole(Role request);
+
     public Role updateUserRole(UpdateUserRoleRequest request, Long userId);
 
     public void deleteUser(Long userId);

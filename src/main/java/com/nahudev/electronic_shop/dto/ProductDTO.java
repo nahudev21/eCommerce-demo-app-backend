@@ -17,6 +17,8 @@ public class ProductDTO {
 
     private BigDecimal price;
 
+    private BigDecimal sellingPrice;
+
     private int inventory;
 
     private String status;
