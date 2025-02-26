@@ -6,7 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.NaturalId;
-
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -46,4 +47,15 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Token> tokens;
 
+
+    @Column(nullable = false, updatable = false)
+    private ZonedDateTime createdAt;
+
+    @PrePersist
+    public void prePersist() {
+        if (createdAt == null) {
+            // Usa la zona horaria de tu localización (por ejemplo, "America/Argentina/Buenos_Aires")
+            createdAt = ZonedDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires"));
+        }
+    }
 }

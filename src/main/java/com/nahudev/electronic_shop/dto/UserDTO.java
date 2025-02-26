@@ -1,8 +1,8 @@
 package com.nahudev.electronic_shop.dto;
 
-import com.nahudev.electronic_shop.model.Role;
 import lombok.Data;
 
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -19,6 +19,8 @@ public class UserDTO {
     private String email;
 
     private String password;
+
+    private ZonedDateTime createdAt;
 
     private List<OrderDTO> orders;
 

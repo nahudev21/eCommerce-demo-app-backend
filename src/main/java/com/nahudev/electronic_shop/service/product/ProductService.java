@@ -59,6 +59,7 @@ public class ProductService implements IProductService{
                 request.getName(),
                 request.getBrand(),
                 request.getPrice(),
+                request.getSellingPrice(),
                 request.getInventory(),
                 request.getStatus(),
                 request.getDescription(),
@@ -81,6 +82,7 @@ public class ProductService implements IProductService{
         existingProduct.setName(request.getName());
         existingProduct.setBrand(request.getBrand());
         existingProduct.setPrice(request.getPrice());
+        existingProduct.setSellingPrice(request.getSellingPrice());
         existingProduct.setInventory(request.getInventory());
         existingProduct.setStatus(request.getStatus());
         existingProduct.setDescription(request.getDescription());
@@ -124,7 +126,7 @@ public class ProductService implements IProductService{
 
     @Override
     public List<Product> getProductsByName(String name) {
-        return productRepository.findByName(name);
+        return productRepository.findByNameIgnoreCaseContaining(name);
     }
 
     @Override
@@ -135,6 +137,11 @@ public class ProductService implements IProductService{
     @Override
     public Long countProductsByBrandAndName(String brand, String name) {
         return productRepository.countByBrandAndName(brand, name);
+    }
+
+    @Override
+    public List<Product> getProductsByCategoryNames(List<String> categoryNames) {
+        return productRepository.findProductsByCategoryNames(categoryNames);
     }
 
     @Override
