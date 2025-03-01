@@ -19,10 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.management.relation.RoleNotFoundException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -81,9 +78,24 @@ public class UserService implements IUserService{
     @Override
     public User updateUser(UpdateUserRequest request, Long userId) {
 
+
+        // Obtenemos los roles de la base de datos usando los nombres proporcionados en la solicitud.
+        List<Role> roles = roleRepository.findByNameIn(request.getRoles());
+
+        // Verificamos si se encontraron roles válidos
+        if (roles.isEmpty()) {
+            throw new ResourceNotFoundException("No valid roles found for the given names!");
+        }
+
         return userRepository.findById(userId).map(existingUser -> {
+            // Actualizamos la información del usuario (otros campos)
             existingUser.setFirstName(request.getFirstName());
             existingUser.setLastName(request.getLastName());
+
+            // Actualizamos los roles sin crear nuevos
+            existingUser.setRoles(new HashSet<>(roles)); // Establecemos los roles como un conjunto (evitar duplicados)
+
+            // Guardamos los cambios en la base de datos
             return userRepository.save(existingUser);
         }).orElseThrow(() -> new ResourceNotFoundException("User not found!"));
 
