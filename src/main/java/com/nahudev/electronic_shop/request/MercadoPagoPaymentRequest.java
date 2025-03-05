@@ -22,6 +22,8 @@ public class MercadoPagoPaymentRequest {
 
   private final BigDecimal unitPrice;
 
+  private final BigDecimal sellingPrice;
+
   private final String currencyId;
 
 }

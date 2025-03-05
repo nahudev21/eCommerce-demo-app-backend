@@ -52,7 +52,7 @@ public class OrderService implements IOrderService{
 
         // Setter the user
         order.setUser(cart.getUser());
-        order.setOrderStatus(OrderStatus.PENDING);
+        order.setOrderStatus(OrderStatus.PENDIENTE);
         order.setOrderDate(LocalDate.now());
 
         return order;
